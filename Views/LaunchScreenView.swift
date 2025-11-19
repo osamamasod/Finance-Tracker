@@ -1,3 +1,11 @@
+//
+//  LaunchScreenView.swift
+//  Finance Tracker
+//
+//  Created by Osama Masoud on 19.11.2025.
+//
+
+
 import SwiftUI
 
 struct LaunchScreenView: View {
@@ -6,7 +14,7 @@ struct LaunchScreenView: View {
 
     var body: some View {
         ZStack {
-            Color.mainColor.ignoresSafeArea()
+            Color.blue.ignoresSafeArea()
 
             VStack {
                 Spacer()

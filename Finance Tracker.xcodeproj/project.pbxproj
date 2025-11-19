@@ -29,6 +29,44 @@
 		4212D6C32ECDDC79008D0A4B /* Finance TrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Finance TrackerUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4212D6F62ECDE7A7008D0A4B /* Exceptions for "Utils" folder in "Finance Tracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = 4212D6A62ECDDC78008D0A4B /* Finance Tracker */;
+		};
+		4212D6F72ECDE7AD008D0A4B /* Exceptions for "Services" folder in "Finance Tracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = 4212D6A62ECDDC78008D0A4B /* Finance Tracker */;
+		};
+		4212D6F82ECDE7B3008D0A4B /* Exceptions for "ViewModels" folder in "Finance Tracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = 4212D6A62ECDDC78008D0A4B /* Finance Tracker */;
+		};
+		4212D6F92ECDE7BA008D0A4B /* Exceptions for "Models" folder in "Finance Tracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = 4212D6A62ECDDC78008D0A4B /* Finance Tracker */;
+		};
+		4212D6FA2ECDE7C1008D0A4B /* Exceptions for "Views" folder in "Finance Tracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				.gitkeep,
+			);
+			target = 4212D6A62ECDDC78008D0A4B /* Finance Tracker */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		4212D6A92ECDDC78008D0A4B /* Finance Tracker */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -43,6 +81,46 @@
 		4212D6C62ECDDC79008D0A4B /* Finance TrackerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Finance TrackerUITests";
+			sourceTree = "<group>";
+		};
+		4212D6D62ECDE4AA008D0A4B /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4212D6FA2ECDE7C1008D0A4B /* Exceptions for "Views" folder in "Finance Tracker" target */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4212D6D72ECDE4B1008D0A4B /* Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4212D6F92ECDE7BA008D0A4B /* Exceptions for "Models" folder in "Finance Tracker" target */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4212D6D82ECDE4BA008D0A4B /* ViewModels */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4212D6F82ECDE7B3008D0A4B /* Exceptions for "ViewModels" folder in "Finance Tracker" target */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4212D6D92ECDE4CA008D0A4B /* Services */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4212D6F72ECDE7AD008D0A4B /* Exceptions for "Services" folder in "Finance Tracker" target */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		4212D6DA2ECDE4D2008D0A4B /* Utils */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4212D6F62ECDE7A7008D0A4B /* Exceptions for "Utils" folder in "Finance Tracker" target */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +153,11 @@
 		4212D69E2ECDDC78008D0A4B = {
 			isa = PBXGroup;
 			children = (
+				4212D6DA2ECDE4D2008D0A4B /* Utils */,
+				4212D6D92ECDE4CA008D0A4B /* Services */,
+				4212D6D82ECDE4BA008D0A4B /* ViewModels */,
+				4212D6D72ECDE4B1008D0A4B /* Models */,
+				4212D6D62ECDE4AA008D0A4B /* Views */,
 				4212D6A92ECDDC78008D0A4B /* Finance Tracker */,
 				4212D6BC2ECDDC79008D0A4B /* Finance TrackerTests */,
 				4212D6C62ECDDC79008D0A4B /* Finance TrackerUITests */,
@@ -109,6 +192,11 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4212D6A92ECDDC78008D0A4B /* Finance Tracker */,
+				4212D6D62ECDE4AA008D0A4B /* Views */,
+				4212D6D72ECDE4B1008D0A4B /* Models */,
+				4212D6D82ECDE4BA008D0A4B /* ViewModels */,
+				4212D6D92ECDE4CA008D0A4B /* Services */,
+				4212D6DA2ECDE4D2008D0A4B /* Utils */,
 			);
 			name = "Finance Tracker";
 			packageProductDependencies = (

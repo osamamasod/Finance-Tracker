@@ -1,86 +1,86 @@
-//
-//  ContentView.swift
-//  Finance Tracker
-//
-//  Created by Osama Masoud on 19.11.2025.
-//
-
 import SwiftUI
-import CoreData
 
-struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
+struct WelcomeHeader: View {
+    @State private var displayedText = ""
+    private let fullText = "Finance Tracker"
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
+        VStack(spacing: 8) {
+            Text(displayedText)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+                .onAppear {
+                    startLoopingTypewriter()
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
         }
+        .multilineTextAlignment(.center)
+        .padding(.bottom, 30)
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+    
+    private func startLoopingTypewriter() {
+        typeWriterEffect {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                startLoopingTypewriter()
             }
         }
     }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+    
+    private func typeWriterEffect(completion: @escaping () -> Void) {
+        displayedText = ""
+        var charIndex = 0.0
+        for letter in fullText {
+            DispatchQueue.main.asyncAfter(deadline: .now() + charIndex * 0.1) {
+                displayedText.append(letter)
+                if displayedText.count == fullText.count {
+                    completion()
+                }
             }
+            charIndex += 1
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+struct ContentView: View {
+    var body: some View {
+        NavigationView {
+            VStack {
+                Spacer()
+                
+                WelcomeHeader()
+                
+                Spacer()
+                
+                VStack(spacing: 16) {
+                    NavigationLink(destination: Text("Login Screen")) {
+                        Text("Login")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.blue)
+                            .cornerRadius(12)
+                            .padding(.horizontal, 24)
+                    }
+                    
+                    NavigationLink(destination: Text("Register Screen")) {
+                        Text("Register")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, minHeight: 50)
+                            .background(Color.green)
+                            .cornerRadius(12)
+                            .padding(.horizontal, 24)
+                    }
+                }
+                .padding(.bottom, 80)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemBackground).ignoresSafeArea())
+            .navigationBarHidden(true)
+        }
+    }
+}
 
 #Preview {
-    ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    ContentView()
 }
