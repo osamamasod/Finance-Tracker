@@ -5,16 +5,14 @@ struct RegisterView: View {
         case name, email, password, confirmPassword
     }
     
-    @State private var name = ""
-    @State private var email = ""
-    @State private var password = ""
-    @State private var confirmPassword = ""
+    @StateObject private var viewModel = RegisterViewModel()
     @FocusState private var focusedField: Field?
     @EnvironmentObject var appState: AppState
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
-            // Background with subtle gradient (matches login)
+            // Background Gradient
             LinearGradient(
                 gradient: Gradient(colors: [Color.pageBackground, Color.pageBackground.opacity(0.8)]),
                 startPoint: .topLeading,
@@ -24,6 +22,7 @@ struct RegisterView: View {
             
             ScrollView {
                 VStack(spacing: 0) {
+                    
                     // Header Section
                     VStack(spacing: 24) {
                         // App Icon
@@ -43,7 +42,7 @@ struct RegisterView: View {
                                 .font(.system(size: 32, weight: .bold))
                                 .foregroundColor(.headerTextColor)
                             
-                            Text("Join us to start tracking your finances")
+                            Text("Join us to track your  finances")
                                 .font(.body)
                                 .foregroundColor(.secondaryText)
                                 .multilineTextAlignment(.center)
@@ -54,12 +53,19 @@ struct RegisterView: View {
                     
                     // Form Section
                     VStack(spacing: 24) {
-                        // Input Fields - Perfectly aligned with login page
+                        
+                        // Error Message
+                        if let errorMessage = viewModel.errorMessage {
+                            ErrorMessageView(errorMessage: errorMessage)
+                        }
+                        
+                        // Input Fields
                         VStack(spacing: 16) {
+                            
                             InputField(
                                 icon: "person.fill",
                                 placeholder: "Full Name",
-                                text: $name,
+                                text: $viewModel.name,
                                 focusedField: $focusedField,
                                 fieldType: Field.name
                             )
@@ -67,28 +73,33 @@ struct RegisterView: View {
                             InputField(
                                 icon: "envelope.fill",
                                 placeholder: "Email Address",
-                                text: $email,
+                                text: $viewModel.email,
                                 focusedField: $focusedField,
                                 fieldType: Field.email
                             )
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
                             
                             InputField(
                                 icon: "lock.fill",
                                 placeholder: "Password",
-                                text: $password,
+                                text: $viewModel.password,
                                 focusedField: $focusedField,
                                 fieldType: Field.password,
                                 isSecure: true
                             )
+                            .textContentType(.newPassword)
                             
                             InputField(
                                 icon: "lock.shield.fill",
                                 placeholder: "Confirm Password",
-                                text: $confirmPassword,
+                                text: $viewModel.confirmPassword,
                                 focusedField: $focusedField,
                                 fieldType: Field.confirmPassword,
                                 isSecure: true
                             )
+                            .textContentType(.newPassword)
                         }
                         
                         // Password Requirements
@@ -100,15 +111,15 @@ struct RegisterView: View {
                             
                             HStack(alignment: .top) {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    RequirementRow(met: password.count >= 8, text: "8+ characters")
-                                    RequirementRow(met: password.rangeOfCharacter(from: .uppercaseLetters) != nil, text: "1 uppercase letter")
+                                    RequirementRow(met: viewModel.password.count >= 8, text: "8+ characters")
+                                    RequirementRow(met: viewModel.password.rangeOfCharacter(from: .uppercaseLetters) != nil, text: "1 uppercase letter")
                                 }
                                 
                                 Spacer()
                                 
                                 VStack(alignment: .leading, spacing: 4) {
-                                    RequirementRow(met: password.rangeOfCharacter(from: .decimalDigits) != nil, text: "1 number")
-                                    RequirementRow(met: password.rangeOfCharacter(from: .symbols) != nil, text: "1 special character")
+                                    RequirementRow(met: viewModel.password.rangeOfCharacter(from: .decimalDigits) != nil, text: "1 number")
+                                    RequirementRow(met: viewModel.password.rangeOfCharacter(from: CharacterSet(charactersIn: "!@#$%^&*()_+-=[]{}|;:,.<>?")) != nil, text: "1 special character")
                                 }
                             }
                             .font(.caption2)
@@ -118,16 +129,28 @@ struct RegisterView: View {
                         
                         // Create Account Button
                         Button(action: {
-                            // Simulate registration and login
-                            appState.isAuthenticated = true
+                            hideKeyboard()
+                            Task {
+                                await viewModel.register()
+                                if viewModel.registrationSuccess {
+                                    appState.isAuthenticated = true
+                                }
+                            }
                         }) {
-                            Text("Create Account")
-                                .font(.headline)
-                                .fontWeight(.semibold)
+                            if viewModel.isLoading {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            } else {
+                                Text("Create Account")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                            }
                         }
                         .primaryButtonStyle()
+                        .disabled(viewModel.isLoading || !viewModel.isFormValid)
+                        .opacity(viewModel.isLoading || !viewModel.isFormValid ? 0.5 : 1)
                         
-                        // Divider with "or"
+                        // Divider
                         HStack(spacing: 16) {
                             Rectangle()
                                 .fill(Color.dividerGray)
@@ -150,8 +173,8 @@ struct RegisterView: View {
                             Text("Already have an account?")
                                 .foregroundColor(.secondaryText)
                             
-                            NavigationLink("Sign In") {
-                                LoginView()
+                            Button("Sign In") {
+                                dismiss()
                             }
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -160,8 +183,7 @@ struct RegisterView: View {
                         .font(.subheadline)
                     }
                     
-                    Spacer()
-                        .frame(height: 20)
+                    Spacer().frame(height: 20)
                     
                     // Footer
                     VStack(spacing: 8) {
@@ -170,17 +192,13 @@ struct RegisterView: View {
                             .foregroundColor(.secondaryText)
                         
                         HStack(spacing: 16) {
-                            Button("Terms of Service") {
-                                // Handle terms
-                            }
+                            Button("Terms of Service") {}
                             
                             Circle()
                                 .fill(Color.secondaryText)
                                 .frame(width: 4, height: 4)
                             
-                            Button("Privacy Policy") {
-                                // Handle privacy
-                            }
+                            Button("Privacy Policy") {}
                         }
                         .font(.caption)
                         .fontWeight(.medium)
@@ -192,6 +210,31 @@ struct RegisterView: View {
         }
         .navigationBarBackButtonHidden(false)
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: viewModel.registrationSuccess) { success in
+            if success {
+                appState.isAuthenticated = true
+            }
+        }
+    }
+}
+
+// Helper view for error messages
+struct ErrorMessageView: View {
+    let errorMessage: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.red)
+            Text(errorMessage)
+                .font(.caption)
+                .foregroundColor(.red)
+            Spacer()
+        }
+        .padding()
+        .background(Color.red.opacity(0.1))
+        .cornerRadius(8)
+        .padding(.horizontal, 21)
     }
 }
 
@@ -212,7 +255,6 @@ struct RequirementRow: View {
     }
 }
 
-// MARK: - Preview
 #Preview {
     NavigationView {
         RegisterView()
