@@ -3,7 +3,6 @@
 //  Finance Tracker
 //
 //  Created by Osama Masoud on 22.11.2025.
-//
 
 
 import Foundation
@@ -24,7 +23,13 @@ final class TokenManager {
         }
     }
     
+    // ✅ Add this
+    static var isLoggedIn: Bool {
+        return token != nil
+    }
+    
     static func clearToken() {
         token = nil
     }
 }
+

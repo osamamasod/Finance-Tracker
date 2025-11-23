@@ -7,7 +7,7 @@
 
 
 import Foundation
-import Combine
+internal import Combine
 
 final class AppState: ObservableObject {
     @Published var isAuthenticated: Bool = false

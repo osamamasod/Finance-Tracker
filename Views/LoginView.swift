@@ -5,14 +5,13 @@ struct LoginView: View {
         case email, password
     }
     
-    @State private var email = ""
-    @State private var password = ""
+    @StateObject private var viewModel = LoginViewModel()   // Use ViewModel
     @FocusState private var focusedField: Field?
     @EnvironmentObject var appState: AppState
     
     var body: some View {
         ZStack {
-            // Background with subtle gradient
+            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.pageBackground, Color.pageBackground.opacity(0.8)]),
                 startPoint: .topLeading,
@@ -21,14 +20,14 @@ struct LoginView: View {
             .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                // Header Section
+                
+                // Header
                 VStack(spacing: 24) {
-                    // App Icon
                     ZStack {
                         Circle()
                             .fill(Color.mainColor)
                             .frame(width: 80, height: 80)
-                            .shadow(color: Color.mainColor.opacity(0.3), radius: 8, x: 0, y: 4)
+                            .shadow(color: Color.mainColor.opacity(0.3), radius: 8)
                         
                         Image(systemName: "wallet.pass.fill")
                             .font(.system(size: 32, weight: .medium))
@@ -49,14 +48,14 @@ struct LoginView: View {
                 .padding(.top, 60)
                 .padding(.bottom, 40)
                 
-                // Form Section
+                // ---------------- FORM ----------------
                 VStack(spacing: 24) {
-                    // Input Fields - Now perfectly aligned with button
+                    
                     VStack(spacing: 16) {
                         InputField(
                             icon: "envelope.fill",
                             placeholder: "Email Address",
-                            text: $email,
+                            text: $viewModel.email,            // ← bind to ViewModel
                             focusedField: $focusedField,
                             fieldType: Field.email
                         )
@@ -64,53 +63,58 @@ struct LoginView: View {
                         InputField(
                             icon: "lock.fill",
                             placeholder: "Password",
-                            text: $password,
+                            text: $viewModel.password,         // ← bind to ViewModel
                             focusedField: $focusedField,
                             fieldType: Field.password,
                             isSecure: true
                         )
                     }
                     
-                    // Forgot Password
                     HStack {
                         Spacer()
-                        Button("Forgot Password?") {
-                            // Handle forgot password
-                        }
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.mainColor)
+                        Button("Forgot Password?") { }
+                            .font(.subheadline)
+                            .foregroundColor(.mainColor)
                     }
-                    .padding(.horizontal, 21) // Match button padding
+                    .padding(.horizontal, 21)
                     
-                    // Login Button - Now perfectly matches field width
-                    Button(action: {
-                        // Simulate login
-                        appState.isAuthenticated = true
-                    }) {
-                        Text("Sign In")
-                            .font(.headline)
-                            .fontWeight(.semibold)
+                    // ---------------- LOGIN BUTTON ----------------
+                    Button {
+                        Task {
+                            let success = await viewModel.login()
+                            if success {
+                                appState.isAuthenticated = true
+                            }
+                        }
+                    } label: {
+                        if viewModel.isLoading {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Sign In")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                        }
                     }
                     .primaryButtonStyle()
                     
-                    // Divider with "or"
-                    HStack(spacing: 16) {
-                        Rectangle()
-                            .fill(Color.dividerGray)
-                            .frame(height: 1)
-                        
-                        Text("or")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondaryText)
-                        
-                        Rectangle()
-                            .fill(Color.dividerGray)
-                            .frame(height: 1)
+                    // Error Message
+                    if let error = viewModel.errorMessage {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .font(.subheadline)
+                            .padding(.top, 8)
                     }
                     
-                    // Sign Up Option
+                    // Divider
+                    HStack(spacing: 16) {
+                        Rectangle().fill(Color.dividerGray).frame(height: 1)
+                        Text("or")
+                            .font(.caption)
+                            .foregroundColor(.secondaryText)
+                        Rectangle().fill(Color.dividerGray).frame(height: 1)
+                    }
+                    
+                    // Sign Up
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
                             .foregroundColor(.secondaryText)
@@ -122,7 +126,6 @@ struct LoginView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.mainColor)
                     }
-                    .font(.subheadline)
                 }
                 
                 Spacer()
@@ -134,17 +137,9 @@ struct LoginView: View {
                         .foregroundColor(.secondaryText)
                     
                     HStack(spacing: 16) {
-                        Button("Terms of Service") {
-                            // Handle terms
-                        }
-                        
-                        Circle()
-                            .fill(Color.secondaryText)
-                            .frame(width: 4, height: 4)
-                        
-                        Button("Privacy Policy") {
-                            // Handle privacy
-                        }
+                        Button("Terms of Service") {}
+                        Circle().fill(Color.secondaryText).frame(width: 4, height: 4)
+                        Button("Privacy Policy") {}
                     }
                     .font(.caption)
                     .fontWeight(.medium)
@@ -158,7 +153,6 @@ struct LoginView: View {
     }
 }
 
-// MARK: - Preview
 #Preview {
     NavigationView {
         LoginView()

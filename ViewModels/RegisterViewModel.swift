@@ -1,5 +1,5 @@
 import Foundation
-import Combine
+internal import Combine
 
 @MainActor
 final class RegisterViewModel: ObservableObject {
