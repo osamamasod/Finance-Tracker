@@ -5,13 +5,12 @@ struct LoginView: View {
         case email, password
     }
     
-    @StateObject private var viewModel = LoginViewModel()   // Use ViewModel
+    @StateObject private var viewModel = LoginViewModel()
     @FocusState private var focusedField: Field?
     @EnvironmentObject var appState: AppState
     
     var body: some View {
         ZStack {
-            // Background
             LinearGradient(
                 gradient: Gradient(colors: [Color.pageBackground, Color.pageBackground.opacity(0.8)]),
                 startPoint: .topLeading,
@@ -20,8 +19,6 @@ struct LoginView: View {
             .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                
-                // Header
                 VStack(spacing: 24) {
                     ZStack {
                         Circle()
@@ -48,14 +45,12 @@ struct LoginView: View {
                 .padding(.top, 60)
                 .padding(.bottom, 40)
                 
-                // ---------------- FORM ----------------
                 VStack(spacing: 24) {
-                    
                     VStack(spacing: 16) {
                         InputField(
                             icon: "envelope.fill",
                             placeholder: "Email Address",
-                            text: $viewModel.email,            // ← bind to ViewModel
+                            text: $viewModel.email,
                             focusedField: $focusedField,
                             fieldType: Field.email
                         )
@@ -63,7 +58,7 @@ struct LoginView: View {
                         InputField(
                             icon: "lock.fill",
                             placeholder: "Password",
-                            text: $viewModel.password,         // ← bind to ViewModel
+                            text: $viewModel.password,
                             focusedField: $focusedField,
                             fieldType: Field.password,
                             isSecure: true
@@ -72,17 +67,15 @@ struct LoginView: View {
                     
                     HStack {
                         Spacer()
-                        Button("Forgot Password?") { }
+                        Button("Forgot Password?") {}
                             .font(.subheadline)
                             .foregroundColor(.mainColor)
                     }
                     .padding(.horizontal, 21)
                     
-                    // ---------------- LOGIN BUTTON ----------------
                     Button {
                         Task {
-                            let success = await viewModel.login()
-                            if success {
+                            if await viewModel.login() {
                                 appState.isAuthenticated = true
                             }
                         }
@@ -97,7 +90,6 @@ struct LoginView: View {
                     }
                     .primaryButtonStyle()
                     
-                    // Error Message
                     if let error = viewModel.errorMessage {
                         Text(error)
                             .foregroundColor(.red)
@@ -105,7 +97,6 @@ struct LoginView: View {
                             .padding(.top, 8)
                     }
                     
-                    // Divider
                     HStack(spacing: 16) {
                         Rectangle().fill(Color.dividerGray).frame(height: 1)
                         Text("or")
@@ -114,7 +105,6 @@ struct LoginView: View {
                         Rectangle().fill(Color.dividerGray).frame(height: 1)
                     }
                     
-                    // Sign Up
                     HStack(spacing: 4) {
                         Text("Don't have an account?")
                             .foregroundColor(.secondaryText)
@@ -130,7 +120,6 @@ struct LoginView: View {
                 
                 Spacer()
                 
-                // Footer
                 VStack(spacing: 8) {
                     Text("By continuing, you agree to our")
                         .font(.caption)
